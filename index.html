@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20261157-source | Portfolio</title>
+    <style>
+        /* 1. 디자인 시스템 & 변수 설정 */
+        :root {
+            --bg-color: #212529;       /* 메인 그레이 배경 */
+            --card-bg: #2b3035;        /* 카드 및 섹션 배경 */
+            --text-main: #f8f9fa;      /* 밝은 텍스트 */
+            --text-sub: #ced4da;       /* 중간 텍스트 */
+            --text-muted: #868e96;     /* 어두운 텍스트 */
+            --point-color: #4dabf7;    /* 포인트 블루 (강조용) */
+            --border-color: #343a40;   /* 테두리 색상 */
+        }
+
+        /* 2. 기본 여백 및 글꼴 초기화 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.7;
+            padding: 60px 20px;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        /* 3. 헤더 (프로필) 영역 */
+        header {
+            margin-bottom: 60px;
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            margin-bottom: 8px;
+        }
+
+        header h1 span {
+            color: var(--point-color);
+        }
+
+        header .intro {
+            font-size: 1.15rem;
+            color: var(--text-sub);
+            font-weight: 400;
+        }
+
+        /* 4. 공통 섹션 스타일 */
+        section {
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* 제목 옆에 세련된 그레이 라인 추가 */
+        h2::after {
+            content: '';
+            flex: 1;
+            margin-left: 15px;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        /* 5. 자기소개 콘텐츠 */
+        .about-box {
+            background-color: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            color: var(--text-sub);
+        }
+
+        .about-box p {
+            margin-bottom: 12px;
+        }
+        .about-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 6. 기술 스택 (태그 스타일) */
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        /* 마우스 올렸을 때 은은한 변화 */
+        .tag:hover {
+            border-color: var(--point-color);
+            color: var(--point-color);
+        }
+
+        /* 7. 프로젝트 리스트 */
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .project-item {
+            background-color: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .project-item:hover {
+            transform: translateY(-2px);
+            border-color: #495057;
+        }
+
+        .project-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .project-desc {
+            font-size: 0.95rem;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+        }
+
+        .project-tech {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        /* 8. 푸터 (연락처) */
+        footer {
+            margin-top: 80px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--text-sub);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: var(--point-color);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>안녕하세요, <span>20261157-source</span>입니다</h1>
+            <p class="intro">새로운 도전을 즐기는 컴퓨터공학부 1학년 주니어 개발자입니다.</p>
+        </header>
+
+        <section>
+            <h2>About Me</h2>
+            <div class="about-box">
+                <p>💻 대학교에 입학해 컴퓨터 프로그래밍의 매력에 빠져 열심히 공부하고 있습니다.</p>
+                <p>깃허브 저장소와 GitHub Pages 기능을 활용해 인생 첫 웹사이트 호스팅과 배포에 성공했습니다. 앞으로 배운 기술들과 프로젝트들을 이곳에 차곡차곡 기록해 나갈 예정입니다.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Tech Stacks</h2>
+            <div class="tech-tags">
+                <span class="tag">HTML5</span>
+                <span class="tag">CSS3</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">C Language</span>
+                <span class="tag">Python</span>
+                <span class="tag">Git / GitHub</span>
+            </div>
+        </section>
+
+        <section>
+            <h2>Projects</h2>
+            <div class="project-list">
+                <div class="project-item">
+                    <div class="project-title">My First Web Portfolio</div>
+                    <div class="project-desc">GitHub Pages 호스팅 기능을 이용해 제작한 나만의 첫 전용 홈페이지입니다. 깔끔한 그레이 모드 스타일의 레이아웃을 직접 구현하고 웹상에 배포했습니다.</div>
+                    <div class="project-tech">#HTML #CSS #GitHub_Pages</div>
+                </div>
+                <div class="project-item">
+                    <div class="project-title">학과 프로그래밍 과제 저장소 (준비 중)</div>
+                    <div class="project-desc">1학년 전공 수업에서 진행하는 C언어/Python 토이 프로젝트들을 업로드할 예정입니다.</div>
+                    <div class="project-tech">#C #Python #Algorithm</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Contact: <a href="mailto:your-email@gmail.com">your-email@gmail.com</a> | <a href="https://github.com/20261157-source" target="_blank">GitHub</a></p>
+            <p style="margin-top: 10px;">© 2026 20261157-source. Powered by GitHub Pages</p>
+        </footer>
+    </div>
+
+</body>
+</html>
