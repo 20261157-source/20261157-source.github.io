@@ -1,206 +1,243 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>  /* for atof() */
 #include <ctype.h>
+#include <string.h>
+#include <math.h>    /* for mathematical functions and macros */
 
-#define MAXTOKEN 1000
+#define MAXOP 100     /* max size of operand or operator */
+#define NUMBER '0'    /* signal that a number was found */
+#define MAXVAL 100    /* maximum depth of val stack */
 
-enum { NAME, PARENS, BRACKETS };
+int top = 0;          /* next free stack position */
+double stack[MAXVAL]; /* value stack */
 
-void dcl(void);
-void dirdcl(void);
-int gettoken(void);
-void ungettoken(void);
-int is_type(char *s);
+int getop(char []);
+void push(double);
+double pop(void);
+int getch(void);
+void ungetch(int);
 
-int tokentype;
-char token[MAXTOKEN];
-char name[MAXTOKEN];
-char datatype[MAXTOKEN];
-char out[10000];
-
-int has_buf = 0;
-int buf_tokentype;
-char buf_token[MAXTOKEN];
-
-void ungettoken(void) {
-    has_buf = 1;
-    buf_tokentype = tokentype;
-    strcpy(buf_token, token);
-}
-
-int gettoken(void) {
-    int c;
-    char *p = token;
-
-    if (has_buf) {
-        has_buf = 0;
-        tokentype = buf_tokentype;
-        strcpy(token, buf_token);
-        return tokentype;
-    }
-
-    while ((c = getchar()) == ' ' || c == '\t')
-        ;
-
-    if (c == '(') {
-        if ((c = getchar()) == ')') {
-            strcpy(token, "()");
-            return tokentype = PARENS;
-        } else {
-            ungetc(c, stdin);
-            strcpy(token, "(");
-            return tokentype = '(';
-        }
-    } else if (c == '[') {
-        *p++ = c;
-        while ((c = getchar()) != ']' && c != '\n' && c != EOF) {
-            *p++ = c;
-        }
-        if (c == '\n' || c == EOF) {
-            printf("error: missing ]\n");
-            ungetc(c, stdin);
-        }
-        *p++ = ']';
-        *p = '\0';
-        return tokentype = BRACKETS;
-    } else if (isalpha(c)) {
-        for (*p++ = c; isalnum(c = getchar()); )
-            *p++ = c;
-        *p = '\0';
-        ungetc(c, stdin);
-        return tokentype = NAME;
-    } else {
-        return tokentype = c;
-    }
-}
-
-int is_type(char *s) {
-    return strcmp(s, "char") == 0 || strcmp(s, "int") == 0 ||
-           strcmp(s, "void") == 0 || strcmp(s, "float") == 0 ||
-           strcmp(s, "double") == 0 || strcmp(s, "const") == 0 ||
-           strcmp(s, "volatile") == 0;
-}
-
-void dcl(void) {
-    int ns = 0;
-    char quals[50][128];
+int main(void)
+{
+    int type;
+    double op2;
+    char s[MAXOP];
+    double saved[26]; /* array to store variables */
     int i;
+    double temp;      /* temporary variable for swap */
 
-    for (i = 0; i < 50; i++) quals[i][0] = '\0';
-
-    while (gettoken() == '*') {
-        while (gettoken() == NAME && 
-              (strcmp(token, "const") == 0 || strcmp(token, "volatile") == 0)) {
-            if (quals[ns][0] != '\0') strcat(quals[ns], " ");
-            strcat(quals[ns], token);
-        }
-        ungettoken();
-        ns++;
-    }
-    dirdcl();
-    while (ns-- > 0) {
-        strcat(out, " ");
-        if (quals[ns][0] != '\0') {
-            strcat(out, quals[ns]);
-            strcat(out, " ");
-        }
-        strcat(out, "pointer to");
-    }
-}
-
-void dirdcl(void) {
-    int type;
-
-    if (tokentype == '(') {
-        dcl();
-        if (tokentype != ')') {
-            printf("error: missing )\n");
-        }
-    } else if (tokentype == NAME) {
-        strcpy(name, token);
+    /* initialize variables to zero */
+    for (i = 0; i < 26; i++) {
+        saved[i] = 0.0;
     }
 
-    while ((type = gettoken()) == PARENS || type == BRACKETS || type == '(') {
-        if (type == PARENS) {
-            strcat(out, " function returning");
-        } else if (type == '(') {
-            strcat(out, " function returning");
-            while ((type = gettoken()) != ')' && type != '\n' && type != EOF)
-                ;
-            if (type != ')') {
-                printf("error: missing )\n");
-                if (type == '\n' || type == EOF) {
-                    ungetc(type, stdin);
-                    tokentype = '\n';
-                    break;
+    while ((type = getop(s)) != EOF) {
+        switch (type) {
+            case '\n':
+                if (top > 0) {
+                    printf("\t%.8g\n", pop());
                 }
-            }
-        } else if (type == BRACKETS) {
-            strcat(out, " array");
-            strcat(out, token);
-            strcat(out, " of");
-        }
-    }
-}
-
-int main(int argc, char *argv[]) {
-    int type;
-    char temp[12000];
-
-    if (argc < 2) return 1;
-
-    if (strcmp(argv[1], "-dcl") == 0) {
-        while (gettoken() != EOF) {
-            if (tokentype == '\n') continue;
-
-            datatype[0] = '\0';
-            while (tokentype == NAME && is_type(token)) {
-                if (datatype[0] != '\0') strcat(datatype, " ");
-                strcat(datatype, token);
-                gettoken();
-            }
-            ungettoken();
-
-            out[0] = '\0';
-            name[0] = '\0';
-
-            dcl();
-
-            if (tokentype != '\n' && tokentype != EOF) {
-                printf("syntax error\n");
-                while (tokentype != '\n' && tokentype != EOF) {
-                    gettoken();
-                }
-            } else {
-                printf("%s: %s %s\n", name, out, datatype);
-            }
-        }
-    } else if (strcmp(argv[1], "-undcl") == 0) {
-        while (gettoken() != EOF) {
-            if (tokentype == '\n') continue;
-
-            strcpy(out, token);
-            while ((type = gettoken()) != '\n' && type != EOF) {
-                if (type == PARENS || type == BRACKETS) {
-                    strcat(out, token);
-                } else if (type == '*') {
-                    int next_type = gettoken();
-                    ungettoken();
-                    if (next_type == PARENS || next_type == BRACKETS) {
-                        sprintf(temp, "(*%s)", out);
-                    } else {
-                        sprintf(temp, "*%s", out);
-                    }
-                    strcpy(out, temp);
-                } else if (type == NAME) {
-                    sprintf(temp, "%s %s", token, out);
-                    strcpy(out, temp);
+                break;
+            case '+':
+                push(pop() + pop());
+                break;
+            case '*':
+                push(pop() * pop());
+                break;
+            case '-':
+                op2 = pop();
+                push(pop() - op2);
+                break;
+            case '/':
+                op2 = pop();
+                if (op2 != 0.0) {
+                    push(pop() / op2);
                 } else {
-                    printf("invalid input at %s\n", token);
+                    printf("error: zero divisor\n");
                 }
-            }
-            printf("%s\n", out);
+                break;
+            case '%':
+                op2 = pop();
+                if (op2 != 0.0) {
+                    push(fmod(pop(), op2));
+                } else {
+                    printf("error: zero divisor in modulus\n");
+                }
+                break;
+            case NUMBER:
+                push(atof(s));
+                break;
+            case 'v':                               /* push variable value onto stack */
+                push(saved[s[0] - 'a']);
+                break;
+            case '=':
+                if (islower((unsigned char)s[0])) {
+                    if (top > 0) {
+                        saved[s[0] - 'a'] = pop();  /* pop and assign variable */
+                    } else {
+                        printf("error: stack empty\n");
+                    }
+                } else {
+                    printf("error: invalid variable name\n");
+                }
+                break;
+            case 'f':                               /* handle math functions and stack operations */
+                if (strcmp(s, "clear") == 0) {
+                    top = 0;
+                } else if (strcmp(s, "print") == 0) {
+                    if (top > 0) {
+                        printf("\t%.8g\n", stack[top - 1]);
+                    } else {
+                        printf("stack empty\n");
+                    }
+                } else if (strcmp(s, "dup") == 0) {
+                    if (top > 0) {
+                        push(stack[top - 1]);
+                    } else {
+                        printf("stack empty, cannot duplicate\n");
+                    }
+                } else if (strcmp(s, "swap") == 0) {
+                    if (top >= 2) {
+                        temp = stack[top - 1];
+                        stack[top - 1] = stack[top - 2];
+                        stack[top - 2] = temp;
+                    } else {
+                        printf("stack has fewer than 2 elements\n");
+                    }
+                } else if (strcmp(s, "pow") == 0) {
+                    op2 = pop();
+                    push(pow(pop(), op2));
+                } else if (strcmp(s, "exp") == 0) {
+                    push(exp(pop()));
+                } else if (strcmp(s, "sin") == 0) {
+                    push(sin(pop()));
+                } else if (strcmp(s, "cos") == 0) {
+                    push(cos(pop()));
+                } else if (strcmp(s, "tan") == 0) {
+                    push(tan(pop()));
+                } else {
+                    printf("error: unknown function %s\n", s);
+                }
+                break;
+            default:
+                printf("error: unknown command %s\n", s);
+                break;
         }
     }
     return 0;
+}
+
+/* push: push f onto value stack */
+void push(double f)
+{
+    if (top < MAXVAL) {
+        stack[top] = f;
+        top++;
+    } else {
+        printf("error: stack full, can't push %g\n", f);
+    }
+}
+
+/* pop: pop and return top value from stack */
+double pop(void)
+{
+    if (top > 0) {
+        top--;
+        return stack[top];
+    } else {
+        return 0.0;
+    }
+}
+
+/* getop: get next operator or numeric operand */
+int getop(char s[])
+{
+    int k, c, n;
+
+    while ((c = getch()) == ' ' || c == '\t')
+        ;
+    s[0] = c;
+    s[1] = '\0';
+
+    if (isalpha(c)) {
+        k = 0;
+        while (isalpha(s[++k] = c = getch()))
+            ;
+        s[k] = '\0';
+        if (c != EOF) {
+            ungetch(c);
+        }
+
+        if (strlen(s) == 1) {
+            n = getch();
+            while (n == ' ' || n == '\t') {
+                n = getch();
+            }
+            if (n == '=') {
+                return '=';
+            } else {
+                if (n != EOF) {
+                    ungetch(n);
+                }
+                return 'v';
+            }
+        }
+        return 'f';
+    }
+
+    if (!isdigit(c) && c != '.' && c != '-') {
+        return c;
+    }
+
+    k = 0;
+    if (c == '-') {
+        n = getch();
+        if (isdigit(n) || n == '.') {
+            c = n;
+            s[++k] = c;
+        } else {
+            if (n != EOF) {
+                ungetch(n);
+            }
+            return '-';
+        }
+    }
+
+    if (isdigit(c)) {
+        while (isdigit(s[++k] = c = getch()))
+            ;
+    }
+    if (c == '.') {
+        while (isdigit(s[++k] = c = getch()))
+            ;
+    }
+    s[k] = '\0';
+    if (c != EOF) {
+        ungetch(c);
+    }
+    return NUMBER;
+}
+
+static int ch = '\0'; /* internal static buffer for pushed-back character */
+
+/* getch: get a (possibly pushed back) character */
+int getch(void)
+{
+    int t;
+    if (ch != '\0') {
+        t = ch;
+        ch = '\0';
+        return t;
+    }
+    return getchar();
+}
+
+/* ungetch: push character back on input */
+void ungetch(int c)
+{
+    if (ch != '\0') {
+        printf("ungetch: too many characters\n");
+    } else {
+        ch = c;
+    }
 }
