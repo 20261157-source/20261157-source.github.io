@@ -189,7 +189,46 @@
 
     <div class="container">
         <header>
-            <h1>안녕하세요, <span>유승찬</span>입니다</h1>
+            <h1>안녕하세요, <span id="typing-name" style="color: #4dabf7;"></span><span class="cursor">|</span>입니다</h1>
+
+<style>
+  .cursor {
+    display: inline-block;
+    font-weight: bold;
+    color: inherit;
+    animation: blink 0.7s infinite; /* 0.7초 주기로 투명도 변경 */
+    margin-left: 2px;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+
+<script>
+  // 💡 '유승찬' 이름이 타이핑되는 과정을 프레임별로 설정
+  const textSteps = [
+    "ㅇ", "유", 
+    "유ㅅ", "유스", "유승", 
+    "유승ㅊ", "유승차", "유승찬"
+  ];
+  
+  let currentStep = 0;
+  const nameElement = document.getElementById("typing-name");
+
+  function typeEffect() {
+    if (currentStep < textSteps.length) {
+      nameElement.textContent = textSteps[currentStep]; // 배열의 글자를 순서대로 출력
+      currentStep++;
+      setTimeout(typeEffect, 120); // 120ms(0.12초) 간격으로 타건 (자연스러운 속도)
+    } else {
+      // 타이핑이 끝나면 커서를 계속 깜빡이게 둡니다.
+    }
+  }
+  
+  // 홈페이지 접속 후 0.5초 대기했다가 타이핑 시작 (더 극적인 효과)
+  setTimeout(typeEffect, 500);
+</script>
             <p class="intro">새로운 도전을 즐기는 대진대학교 컴퓨터공학부 1학년 주니어 개발자 입니다.</p>
         </header>
 
