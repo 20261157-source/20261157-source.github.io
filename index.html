@@ -40,7 +40,7 @@
             z-index: 10;
         }
 
-        /* 3. 🐱 준비한 픽셀 고양이 이미지 스타일 (CSS) */
+        /* 3. 🐱 준비한 픽셀 고양이 이미지 스타일 (CSS 수정됨) */
         #pixel-cat {
             width: 64px; /* 고양이 크기 */
             height: 64px;
@@ -48,13 +48,18 @@
             z-index: 1000; /* 콘텐츠 위로 띄움 */
             cursor: pointer;
             
-            /* 💡 픽셀 아트 이미지 고유의 선명함을 유지하는 핵심 속성 (흐릿함 방지) */
+            /* 💡 픽셀 아트 이미지 고유의 선명함을 유지하는 핵심 속성 (흐릿함 방지) - 필수입니다 */
             image-rendering: pixelated; 
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
             
             /* 기본 도망 속도 (부드럽게 이동) */
             transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            
+            /* 💡 수정된 속성: 이미지의 흰색 사각형 아래에 웹사이트 배경색을 추가하여 테두리를 제거합니다. */
+            /* ❌ mix-blend-mode: multiply는 고양이 색상을 어둡게 왜곡하므로 사용하지 않습니다. */
+            background-color: var(--bg-color); 
+            border: none; /* 혹시 모를 테두리 제거 */
         }
 
         /* [추가] 🐱 잡혔을 때 커서 변경 및 트랜지션 해제 */
