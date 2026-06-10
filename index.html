@@ -185,7 +185,7 @@
             color: var(--point-color);
         }
 
-        /* 🐱 픽셀 고양이 이미지 스타일 (배경 덮기 코드 삭제됨) */
+        /* 🐱 픽셀 고양이 이미지 스타일 */
         #pixel-cat {
             width: 64px;
             height: 64px;
@@ -374,9 +374,13 @@
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < ESCAPE_DISTANCE) {
-                if (catState === 'IDLE') {
-                    catState = 'RUNNING';
-                    cat.src = 'cat_run.png';
+                catState = 'RUNNING';
+
+                // 💡 도망치는 방향(dx 값)에 따라 좌우반전 이미지 실시간 스위칭
+                if (dx < 0) {
+                    cat.src = 'cat_run_left.png';  // 마우스가 우측에 있어서 왼쪽으로 도망칠 때
+                } else {
+                    cat.src = 'cat_run.png';       // 마우스가 좌측에 있어서 오른쪽으로 도망칠 때
                 }
 
                 let runX = catX + (dx / distance) * 200 - (rect.width / 2);
