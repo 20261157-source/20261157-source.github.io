@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>20261157-source | Portfolio</title>
     <style>
-        /* 1. 디자인 시스템 & 변수 설정 */
+        /* 1. 디자인 시스템 & 변수 설정 (Dark Grey Theme) */
         :root {
             --bg-color: #212529;       /* 메인 그레이 배경 */
             --card-bg: #2b3035;        /* 카드 및 섹션 배경 */
@@ -23,243 +23,103 @@
             box-sizing: border-box;
         }
 
-       body {
+        body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            /* 🌌 다크모드에 어울리는 심해/오로라 느낌의 어두운 그라데이션 조합 */
-            background: linear-gradient(-45deg, #181a1d, #212529, #2b3035, #1c2024);
-            background-size: 400% 400%; /* 배경을 4배 키워서 움직일 공간 확보 */
-            animation: darkGradientMove 15s ease infinite; /* 15초 동안 무한 반복 */
+            background-color: var(--bg-color);
             color: var(--text-main);
             line-height: 1.7;
             padding: 60px 20px;
-        }
-
-        /* 배경을 대각선으로 부드럽게 유영하게 만드는 애니메이션 장치 */
-        @keyframes darkGradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            min-height: 100vh;
+            overflow-x: hidden; /* 고양이가 창 밖으로 나갈 때 가로 스크롤바 생기는 것 방지 */
         }
 
         .container {
             max-width: 760px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
 
-        /* 3. 헤더 (프로필) 영역 */
-        header {
-            margin-bottom: 60px;
-            padding-bottom: 20px;
+        /* 3. 🐱 준비한 픽셀 고양이 이미지 스타일 (CSS) */
+        #pixel-cat {
+            width: 64px; /* 고양이 크기 */
+            height: 64px;
+            position: absolute; /* 배경 위로 띄움 */
+            z-index: 1000; /* 콘텐츠 위로 띄움 */
+            cursor: pointer;
+            
+            /* 💡 픽셀 아트 이미지 고유의 선명함을 유지하는 핵심 속성 (흐릿함 방지) */
+            image-rendering: pixelated; 
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            
+            /* 기본 도망 속도 (부드럽게 이동) */
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            letter-spacing: -0.05em;
-            margin-bottom: 8px;
+        /* [추가] 🐱 잡혔을 때 커서 변경 및 트랜지션 해제 */
+        #pixel-cat.caught {
+            cursor: grabbing;
+            transition: none !important; /* 마우스를 실시간으로 칼같이 따라오도록 트랜지션 해제 */
         }
 
-        header h1 span {
-            color: var(--point-color);
-        }
-
-        header .intro {
-            font-size: 1.15rem;
-            color: var(--text-sub);
-            font-weight: 400;
-        }
-
-        /* 4. 공통 섹션 스타일 */
-        section {
-            margin-bottom: 50px;
-        }
-
-        h2 {
-            font-size: 1.35rem;
-            font-weight: 600;
-            color: var(--text-main);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        /* 제목 옆에 세련된 그레이 라인 추가 */
-        h2::after {
-            content: '';
-            flex: 1;
-            margin-left: 15px;
-            height: 1px;
-            background-color: var(--border-color);
-        }
-
-        /* 5. 자기소개 콘텐츠 */
-        .about-box {
-            background-color: var(--card-bg);
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            color: var(--text-sub);
-        }
-
-        .about-box p {
-            margin-bottom: 12px;
-        }
-        .about-box p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* 6. 기술 스택 (태그 스타일) */
-        .tech-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .tag {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border: 1px solid var(--border-color);
-            transition: all 0.2s ease;
-        }
-
-        /* 마우스 올렸을 때 은은한 변화 */
-        .tag:hover {
-            border-color: var(--point-color);
-            color: var(--point-color);
-        }
-
-        /* 7. 프로젝트 리스트 */
-        .project-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .project-item {
-            background-color: var(--card-bg);
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .project-item:hover {
-            transform: translateY(-2px);
-            border-color: #495057;
-        }
-
-        .project-title {
-            font-size: 1.15rem;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 6px;
-        }
-
-        .project-desc {
-            font-size: 0.95rem;
-            color: var(--text-sub);
-            margin-bottom: 12px;
-        }
-
-        .project-tech {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            font-family: monospace;
-        }
-
-        /* 8. 푸터 (연락처) */
-        footer {
-            margin-top: 80px;
-            padding-top: 25px;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        footer a {
-            color: var(--text-sub);
-            text-decoration: none;
-            margin: 0 10px;
-            transition: color 0.2s;
-        }
-
-        footer a:hover {
-            color: var(--point-color);
-        }
+        /* 4. 기존 포트폴리오 스타일 */
+        header { margin-bottom: 60px; padding-bottom: 20px; }
+        header h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.05em; margin-bottom: 8px; }
+        header h1 span { color: var(--point-color); }
+        header .intro { font-size: 1.15rem; color: var(--text-sub); font-weight: 400; }
+        section { margin-bottom: 50px; }
+        h2 { font-size: 1.35rem; font-weight: 600; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px; display: flex; align-items: center; }
+        h2::after { content: ''; flex: 1; margin-left: 15px; height: 1px; background-color: var(--border-color); }
+        .about-box { background-color: var(--card-bg); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); color: var(--text-sub); }
+        .about-box p { margin-bottom: 12px; }
+        .about-box p:last-child { margin-bottom: 0; }
+        .tech-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tag { background-color: var(--card-bg); color: var(--text-main); padding: 6px 14px; border-radius: 30px; font-size: 0.9rem; font-weight: 500; border: 1px solid var(--border-color); transition: all 0.2s ease; }
+        .tag:hover { border-color: var(--point-color); color: var(--point-color); }
+        .project-list { display: flex; flex-direction: column; gap: 16px; }
+        .project-item { background-color: var(--card-bg); padding: 24px; border-radius: 12px; border: 1px solid var(--border-color); transition: transform 0.2s ease, border-color 0.2s ease; }
+        .project-item:hover { transform: translateY(-2px); border-color: #495057; }
+        .project-title { font-size: 1.15rem; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
+        .project-desc { font-size: 0.95rem; color: var(--text-sub); margin-bottom: 12px; }
+        .project-tech { font-size: 0.85rem; color: var(--text-muted); font-family: monospace; }
+        footer { margin-top: 80px; padding-top: 25px; border-top: 1px solid var(--border-color); text-align: center; font-size: 0.9rem; color: var(--text-muted); }
+        footer a { color: var(--text-sub); text-decoration: none; margin: 0 10px; transition: color 0.2s; }
+        footer a:hover { color: var(--point-color); }
+        
+        /* 기존 타이핑 스크립트 스타일 */
+        .cursor { display: inline-block; font-weight: bold; color: inherit; animation: blink 0.7s infinite; margin-left: 2px; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
 <body>
 
+    <img id="pixel-cat" src="cat_sit.png" alt="픽셀 아트 치즈냥이">
+
     <div class="container">
         <header>
-           <h1>안녕하세요, <span id="typing-name" style="color: #4dabf7;"></span><span class="cursor">|</span>입니다</h1>
+            <h1>안녕하세요, <span id="typing-name" style="color: #4dabf7;"></span><span class="cursor">|</span>입니다</h1>
 
-<style>
-  .cursor {
-    display: inline-block;
-    font-weight: bold;
-    color: inherit;
-    animation: blink 0.7s infinite;
-    margin-left: 2px;
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-</style>
+            <script>
+                const textSteps = [ "", "ㅇ", "유", "유ㅅ", "유스", "유승", "유승ㅊ", "유승차", "유승찬" ];
+                let currentStep = 0;
+                let isDeleting = false;
+                const nameElement = document.getElementById("typing-name");
+                function typeEffect() {
+                    nameElement.textContent = textSteps[currentStep];
+                    let typeSpeed = 120;
+                    if (!isDeleting) {
+                        if (currentStep < textSteps.length - 1) { currentStep++; } 
+                        else { isDeleting = true; typeSpeed = 2000; }
+                    } else {
+                        if (currentStep > 0) { currentStep--; typeSpeed = 80; } 
+                        else { isDeleting = false; typeSpeed = 500; }
+                    }
+                    setTimeout(typeEffect, typeSpeed);
+                }
+                setTimeout(typeEffect, 500);
+            </script>
 
-<script>
-  // 💡 맨 앞에 빈칸("")을 추가해서 완전히 지워진 상태부터 시작하게 만듭니다.
-  const textSteps = [
-    "", "ㅇ", "유", 
-    "유ㅅ", "유스", "유승", 
-    "유승ㅊ", "유승차", "유승찬"
-  ];
-  
-  let currentStep = 0;
-  let isDeleting = false; // 현재 지우고 있는 상태인지를 판별하는 장치(스위치)
-  const nameElement = document.getElementById("typing-name");
-
-  function typeEffect() {
-    nameElement.textContent = textSteps[currentStep]; // 현재 단계의 글자를 화면에 표시
-    
-    let typeSpeed = 120; // 기본 타이핑 속도 (0.12초)
-
-    if (!isDeleting) {
-      // 🟢 [타이핑 중일 때]
-      if (currentStep < textSteps.length - 1) {
-        currentStep++; // 다음 글자로 이동
-      } else {
-        // 이름이 다 완성되면 지우기 모드로 전환하고, 2초(2000ms) 동안 완성된 이름을 보여주며 대기
-        isDeleting = true;
-        typeSpeed = 2000; 
-      }
-    } else {
-      // 🔴 [지우는 중일 때]
-      if (currentStep > 0) {
-        currentStep--; // 이전 글자로 이동 (백스페이스 효과)
-        typeSpeed = 80; // 지울 때는 타이핑보다 약간 더 빠르게 (0.08초) 설정
-      } else {
-        // 다 지워지면 다시 타이핑 모드로 전환하고, 0.5초(500ms) 대기 후 다시 시작
-        isDeleting = false;
-        typeSpeed = 500; 
-      }
-    }
-    
-    // 설정된 속도(typeSpeed)만큼 기다렸다가 자기 자신을 다시 실행 (무한 루프)
-    setTimeout(typeEffect, typeSpeed);
-  }
-  
-  // 페이지 로드 후 0.5초 뒤에 최초 시작
-  setTimeout(typeEffect, 500);
-</script>
             <p class="intro">새로운 도전을 즐기는 대진대학교 컴퓨터공학부 1학년 주니어 개발자 입니다.</p>
         </header>
 
@@ -284,51 +144,119 @@
         <section>
             <h2>Projects</h2>
             <div class="project-list">
-                <div class="project-item" style="margin-bottom: 16px;">
+                <div class="project-item">
                     <div class="project-title">My First Web Portfolio</div>
                     <div class="project-desc">아래의 파일을 클릭하여 제가 작성한 보고서와 코드를 확인하실 수 있습니다.</div>
                     <div class="project-tech">#C_Language #Python #HTML #CSS #GitHub_Pages</div>
                 </div>
-               <a href="https://github.com/20261157-source/20261157-source.github.io/blob/main/C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%20%EC%8B%A4%EC%8A%B5%20%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%B6%95%20%EB%B0%8F%20%EA%B2%B0%EA%B3%BC%20%EB%B3%B4%EA%B3%A0%EC%84%9C.%2020261157%20%EC%9C%A0%EC%8A%B9%EC%B0%AC.pdf" target="_blank" style="text-decoration: none; display: block; color: inherit; margin-bottom: 16px;">
-    <div class="project-item" style="cursor: pointer;">
-        <div class="project-title">
-            📚 C 프로그래밍 실습 환경 구축 및 결과 보고서
-            <span style="font-size: 0.85rem; color: #4dabf7; margin-left: 8px; font-weight: normal;">문서 열기 ↗</span>
-        </div>
-        <div class="project-desc">컴퓨터 프로그래밍 실습 환경 구축 과정과 과제 결과를 상세히 정리한 결과 보고서 문서입니다.</div>
-        <div class="project-tech">#Document #Report</div>
-    </div>
-</a>
-
-<a href="https://raw.githubusercontent.com/20261157-source/20261157-source.github.io/refs/heads/main/20261157.c" target="_blank" style="text-decoration: none; display: block; color: inherit; margin-bottom: 16px;">
-    <div class="project-item" style="cursor: pointer;">
-        <div class="project-title">
-            💻 C언어 계산기 소스코드 프로젝트
-            <span style="font-size: 0.85rem; color: #4dabf7; margin-left: 8px; font-weight: normal;">코드 보기 ↗</span>
-        </div>
-        <div class="project-desc">C언어를 기반으로 조건문과 반복문을 활용하여 구현한 개인 실습 사칙연산 계산기 소스코드입니다.</div>
-        <div class="project-tech">#C_Language #Source_Code</div>
-    </div>
-</a>
-
-<a href="https://raw.githubusercontent.com/20261157-source/20261157-source.github.io/refs/heads/main/20261157(dcl).c" target="_blank" style="text-decoration: none; display: block; color: inherit;">
-    <div class="project-item" style="cursor: pointer;">
-        <div class="project-title">
-            💻 DCL 소스코드 프로젝트
-            <span style="font-size: 0.85rem; color: #4dabf7; margin-left: 8px; font-weight: normal;">코드 보기 ↗</span>
-        </div>
-        <div class="project-desc">과제로 구현한 DCL(Data Control Language) 관련 제어 소스코드 파일입니다.</div>
-        <div class="project-tech">#DCL #Programming</div>
-    </div>
-</a>
-            </div>
+                </div>
         </section>
 
         <footer>
-            <p>Contact: <a href="mailto:your-email@gmail.com">20261157@daejin.ac.kr</a> | <a href="https://github.com/20261157-source" target="_blank">GitHub</a></p>
+            <p>Contact: <a href="mailto:your-email@daejin.ac.kr">20261157@daejin.ac.kr</a> | <a href="https://github.com/20261157-source" target="_blank">GitHub</a></p>
             <p style="margin-top: 10px;">© 2026 20261157-source. Powered by GitHub Pages</p>
         </footer>
     </div>
 
+    <script>
+        const cat = document.getElementById('pixel-cat');
+        
+        // 고양이 상태 관리 변수 (IDLE: 앉음, RUNNING: 도망, CAUGHT: 잡힘)
+        let catState = 'IDLE'; 
+        let idleTimer = null; // 가만히 앉는 타이머
+        
+        // 설정값 (필요시 조정)
+        const ESCAPE_DISTANCE = 200; // 커서가 이 거리 안으로 들어오면 도망감 (픽셀)
+        const IDLE_TIMEOUT = 2500;   // 2.5초 동안 마우스 움직임이 없으면 다시 앉음 (밀리초)
+
+        // 🎲 [최초 실행] 배경 화면 랜덤한 위치에 고양이 앉히기
+        window.addEventListener('load', () => {
+            const startX = Math.random() * (window.innerWidth - 100);
+            const startY = Math.random() * (window.innerHeight - 100);
+            cat.style.left = startX + 'px';
+            cat.style.top = startY + 'px';
+        });
+
+        // 🏃‍♂️ [도망치기 & 잡히기 무빙] 마우스 움직임 감지 로직
+        document.addEventListener('mousemove', (e) => {
+            // 마우스가 움직일 때마다 '가만히 앉는 타이머'를 초기화
+            clearTimeout(idleTimer);
+
+            if (catState === 'CAUGHT') {
+                // [잡힌 상태] 마우스를 징그럽게 따라다님 (목덜미 위치 보정 오프셋)
+                cat.style.left = (e.pageX - 32) + 'px';
+                cat.style.top = (e.pageY - 10) + 'px';
+                return; // 잡혔을 때는 도망가는 로직을 실행하지 않음
+            }
+
+            // 고양이의 현재 중심 좌표 계산
+            const rect = cat.getBoundingClientRect();
+            const catX = rect.left + window.scrollX + (rect.width / 2);
+            const catY = rect.top + window.scrollY + (rect.height / 2);
+
+            // 커서와 고양이 사이의 거리 계산 (피타고라스 정리)
+            const dx = catX - e.pageX;
+            const dy = catY - e.pageY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            // 커서가 감지 범위(ESCAPE_DISTANCE) 안에 들어오면 도망감
+            if (distance < ESCAPE_DISTANCE) {
+                // 앉아있거나 가만히 서있던 상태였다면 뛰는 이미지로 변경
+                if (catState === 'IDLE') {
+                    catState = 'RUNNING';
+                    cat.src = 'cat_run.png';
+                }
+
+                // 커서 반대 방향으로 도망갈 좌표 계산 (거리에 비례해 도망)
+                let runX = catX + (dx / distance) * 200 - (rect.width / 2);
+                let runY = catY + (dy / distance) * 200 - (rect.height / 2);
+
+                // 화면 밖으로 도망가지 않게 좌표 제한
+                runX = Math.max(0, Math.min(document.body.scrollWidth - rect.width, runX));
+                runY = Math.max(0, Math.min(document.body.scrollHeight - rect.height, runY));
+
+                // 새로운 위치 설정 (transition 효과로 부드럽게 도망감)
+                cat.style.left = runX + 'px';
+                cat.style.top = runY + 'px';
+            }
+
+            // 일정 시간 동안 마우스 움직임이 멈춰있으면 다시 앉음 (기믹 조건 4)
+            idleTimer = setTimeout(() => {
+                if (catState !== 'CAUGHT') {
+                    catState = 'IDLE';
+                    cat.src = 'cat_sit.png'; // 앉은 이미지로 복구
+                }
+            }, IDLE_TIMEOUT);
+        });
+
+        // 🖐️ [목덜미 포획] 도망가는 고양이를 클릭하면 목덜미를 잡음! (다시 클릭하면 풀어줌)
+        cat.addEventListener('click', (e) => {
+            e.stopPropagation(); // 클릭 이벤트가 뒤로 새는 것 방지
+            
+            if (catState === 'CAUGHT') {
+                // [풀어주기] 목덜미 잡힌 상태에서 다시 누르면 도망가기 시작
+                catState = 'RUNNING';
+                cat.src = 'cat_run.png';
+                cat.classList.remove('caught'); // transition 효과 다시 켬
+                
+                // 풀어주는 순간 커서 옆으로 살짝 밀어내서 즉시 도망가게 유도
+                cat.style.left = (e.pageX + 50) + 'px';
+                cat.style.top = (e.pageY + 50) + 'px';
+                
+            } else {
+                // [포획하기] 클릭에 성공하면 목덜미가 잡힌 이미지 상태로 잡혀있게 만듦 (기믹 조건 2)
+                catState = 'CAUGHT';
+                cat.src = 'cat_scruffed.png';
+                cat.classList.add('caught'); // 마우스를 칼같이 따라오도록 transition 효과 끔
+                
+                // 잡힌 즉시 목덜미 위치 보정 (e.pageX-32, e.pageY-10)
+                cat.style.left = (e.pageX - 32) + 'px';
+                cat.style.top = (e.pageY - 10) + 'px';
+                
+                // 앉는 타이머 취소 (잡혀있는 동안엔 혼자 앉으면 안됨)
+                clearTimeout(idleTimer); 
+            }
+        });
+    </script>
 </body>
 </html>
